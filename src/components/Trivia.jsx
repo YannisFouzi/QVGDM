@@ -25,7 +25,7 @@ export default function Trivia({
   const [selectedAnswers, setSelectedAnswers] = useState([]);
 
   //sound for correct answer
-  const [correctAnswer] = useSound(correct);
+  const [playCorrectSound] = useSound(correct);
   //sound for wrong answer
   const [wrongAnswer] = useSound(wrong);
   //initial sound for the start of the quiz
@@ -97,14 +97,14 @@ export default function Trivia({
           );
           const isCorrect = selectedAnswers.some((answer) => answer.correct);
 
-          if (a === correctAnswerFound) {
+          if (a.correct) {
             setClassName("answer correct");
           } else {
             setClassName("answer wrong");
           }
 
           if (isCorrect) {
-            correctAnswer();
+            playCorrectSound();
             delay(3000, () => {
               setQuestionNumber((prev) => prev + 1);
               setSelectedAnswers([]);
@@ -120,39 +120,54 @@ export default function Trivia({
         });
       }
     } else {
+      console.log("État actuel:", {
+        isConfirming,
+        selectedAnswer: selectedAnswer?.text,
+        clickedAnswer: a.text,
+        className,
+      });
+
       if (!isConfirming) {
+        console.log("Premier clic - Sélection initiale");
         setSelectedAnswer(a);
         setClassName("answer active");
         setIsConfirming(true);
       } else if (selectedAnswer === a) {
-        setClassName("answer confirming");
-        delay(1000, () => {
-          setClassName(a.correct ? "answer correct" : "answer wrong");
-          delay(3000, () => {
+        console.log("Même réponse cliquée, className:", className);
+        if (className === "answer active") {
+          console.log("Confirmation de la réponse");
+          setClassName("answer confirming");
+          delay(1000, () => {
             if (a.correct) {
-              correctAnswer();
-              if (questions.length > questionNumber) {
-                setQuestionNumber((prev) => prev + 1);
-                setSelectedAnswer(null);
-                setIsConfirming(false);
-                setClassName("answer");
-              } else {
-                setStop(true);
-                setQuestionNumber(1);
-                setSelectedAnswer(null);
-                setIsConfirming(false);
-              }
+              setClassName("answer correct");
+              playCorrectSound();
+              delay(3000, () => {
+                if (questions.length > questionNumber) {
+                  setQuestionNumber((prev) => prev + 1);
+                  setSelectedAnswer(null);
+                  setIsConfirming(false);
+                  setClassName("answer");
+                } else {
+                  setStop(true);
+                  setQuestionNumber(1);
+                  setSelectedAnswer(null);
+                  setIsConfirming(false);
+                }
+              });
             } else {
+              setClassName("answer wrong");
               wrongAnswer();
-              delay(1000, () => {
+              delay(3000, () => {
                 setStop(true);
               });
             }
           });
-        });
+        }
       } else {
+        console.log("Changement de réponse");
         setSelectedAnswer(a);
         setClassName("answer active");
+        setIsConfirming(true);
       }
     }
   };
@@ -164,13 +179,38 @@ export default function Trivia({
       <div className="answers">
         {question?.answers.map((answer, index) => (
           <div
-            className={`answer ${selectedAnswer === answer && "active"} ${
-              correctAnswer === answer && "correct"
-            } ${
-              selectedAnswer === answer &&
-              selectedAnswer !== correctAnswer &&
-              "wrong"
-            } ${hiddenAnswers.includes(index) ? "disabled" : ""}`}
+            key={index}
+            className={
+              isDoubleChanceActive
+                ? `answer ${selectedAnswers.includes(answer) && "active"} ${
+                    selectedAnswers.includes(answer) &&
+                    className === "answer confirming" &&
+                    "confirming"
+                  } ${
+                    selectedAnswers.includes(answer) &&
+                    answer.correct &&
+                    className === "answer correct" &&
+                    "correct"
+                  } ${
+                    selectedAnswers.includes(answer) &&
+                    !answer.correct &&
+                    className === "answer wrong" &&
+                    "wrong"
+                  } ${hiddenAnswers.includes(index) ? "disabled" : ""}`
+                : `answer ${
+                    selectedAnswer === answer &&
+                    className === "answer active" &&
+                    "active"
+                  } ${
+                    selectedAnswer === answer &&
+                    className === "answer correct" &&
+                    "correct"
+                  } ${
+                    selectedAnswer === answer &&
+                    className === "answer wrong" &&
+                    "wrong"
+                  } ${hiddenAnswers.includes(index) ? "disabled" : ""}`
+            }
             onClick={() =>
               !hiddenAnswers.includes(index) && handleClick(answer)
             }
