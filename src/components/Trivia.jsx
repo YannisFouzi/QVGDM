@@ -24,6 +24,7 @@ export default function Trivia({
   const [isDoubleChanceActive, setIsDoubleChanceActive] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [showNextButton, setShowNextButton] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
 
   //sound for correct answer
   const [playCorrectSound] = useSound(correct);
@@ -90,85 +91,104 @@ export default function Trivia({
       setIsConfirming(false);
       setClassName("answer");
       setShowNextButton(false);
+      setIsValidating(false);
+      setIsDoubleChanceActive(false);
+      setSelectedAnswers([]);
+      setHiddenAnswers([]);
     } else {
       setStop(true);
       setQuestionNumber(1);
       setSelectedAnswer(null);
       setIsConfirming(false);
+      setIsValidating(false);
+      setIsDoubleChanceActive(false);
+      setSelectedAnswers([]);
+      setHiddenAnswers([]);
     }
   };
 
   const handleClick = (a) => {
+    if (isValidating) return;
+
     if (isDoubleChanceActive) {
       if (!selectedAnswers.includes(a)) {
         if (selectedAnswers.length < 2) {
           setSelectedAnswers([...selectedAnswers, a]);
-          setClassName("answer active");
+        } else {
+          const newAnswers = [...selectedAnswers];
+          newAnswers.shift();
+          newAnswers.push(a);
+          setSelectedAnswers(newAnswers);
         }
       } else {
-        setClassName("answer confirming");
-        delay(1000, () => {
-          const correctAnswerFound = selectedAnswers.find(
-            (answer) => answer.correct
-          );
-          const isCorrect = selectedAnswers.some((answer) => answer.correct);
-
-          if (a.correct) {
-            setClassName("answer correct");
-          } else {
-            setClassName("answer wrong");
-          }
-
-          if (isCorrect) {
-            playCorrectSound();
-            delay(3000, () => {
-              setQuestionNumber((prev) => prev + 1);
-              setSelectedAnswers([]);
-              setIsDoubleChanceActive(false);
-              setClassName("answer");
-            });
-          } else {
-            wrongAnswer();
-            delay(3000, () => {
-              setStop(true);
-            });
-          }
-        });
+        setSelectedAnswers(selectedAnswers.filter((ans) => ans !== a));
       }
     } else {
-      if (!isConfirming) {
+      if (!selectedAnswer) {
         setSelectedAnswer(a);
         setClassName("answer active");
-        setIsConfirming(true);
       } else if (selectedAnswer === a) {
-        if (className === "answer active") {
-          setClassName("answer confirming");
-          delay(1000, () => {
-            if (a.correct) {
-              setClassName("answer correct");
-              delay(1000, () => {
-                playCorrectSound();
-                delay(2000, () => {
-                  setShowNextButton(true);
-                });
-              });
-            } else {
-              setClassName("answer wrong");
-              delay(1000, () => {
-                wrongAnswer();
-                delay(2000, () => {
-                  setStop(true);
-                });
-              });
-            }
-          });
-        }
+        setSelectedAnswer(null);
+        setClassName("answer");
       } else {
         setSelectedAnswer(a);
         setClassName("answer active");
-        setIsConfirming(true);
       }
     }
+  };
+
+  const handleValidateDoubleChance = () => {
+    if (selectedAnswers.length === 0) return;
+
+    setIsValidating(true);
+    setClassName("answer confirming");
+    delay(1000, () => {
+      const correctAnswer = selectedAnswers.find((answer) => answer.correct);
+
+      if (correctAnswer) {
+        setClassName("answer dual");
+        delay(1000, () => {
+          playCorrectSound();
+          delay(2000, () => {
+            setShowNextButton(true);
+          });
+        });
+      } else {
+        setClassName("answer wrong");
+        delay(1000, () => {
+          wrongAnswer();
+          delay(2000, () => {
+            setStop(true);
+          });
+        });
+      }
+    });
+  };
+
+  const handleValidate = () => {
+    if (!selectedAnswer) return;
+
+    setIsValidating(true);
+    setClassName("answer confirming");
+    delay(1000, () => {
+      if (selectedAnswer.correct) {
+        setClassName("answer correct");
+        delay(1000, () => {
+          playCorrectSound();
+          delay(2000, () => {
+            setShowNextButton(true);
+          });
+        });
+      } else {
+        setClassName("answer wrong");
+        delay(1000, () => {
+          wrongAnswer();
+          delay(2000, () => {
+            setStop(true);
+          });
+        });
+      }
+    });
   };
 
   return (
@@ -179,50 +199,61 @@ export default function Trivia({
         {question?.answers.map((answer, index) => (
           <div
             key={index}
-            className={
-              isDoubleChanceActive
-                ? `answer ${selectedAnswers.includes(answer) && "active"} ${
-                    selectedAnswers.includes(answer) &&
-                    className === "answer confirming" &&
-                    "confirming"
-                  } ${
-                    selectedAnswers.includes(answer) &&
-                    answer.correct &&
-                    className === "answer correct" &&
-                    "correct"
-                  } ${
-                    selectedAnswers.includes(answer) &&
-                    !answer.correct &&
-                    className === "answer wrong" &&
-                    "wrong"
-                  } ${hiddenAnswers.includes(index) ? "disabled" : ""}`
-                : `answer ${
-                    selectedAnswer === answer &&
-                    className === "answer active" &&
-                    "active"
-                  } ${
-                    selectedAnswer === answer &&
-                    className === "answer correct" &&
-                    "correct"
-                  } ${
-                    selectedAnswer === answer &&
-                    className === "answer wrong" &&
-                    "wrong"
-                  } ${hiddenAnswers.includes(index) ? "disabled" : ""}`
-            }
+            className={`answer 
+              ${
+                isDoubleChanceActive
+                  ? selectedAnswers.includes(answer)
+                    ? "active"
+                    : ""
+                  : selectedAnswer === answer
+                  ? "active"
+                  : ""
+              } 
+              ${
+                isDoubleChanceActive &&
+                selectedAnswers.includes(answer) &&
+                className === "answer dual"
+                  ? answer.correct
+                    ? "correct"
+                    : "wrong"
+                  : selectedAnswer === answer && className === "answer correct"
+                  ? "correct"
+                  : selectedAnswer === answer && className === "answer wrong"
+                  ? "wrong"
+                  : ""
+              }
+              ${hiddenAnswers.includes(index) ? "disabled" : ""}`}
             onClick={() =>
               !hiddenAnswers.includes(index) && handleClick(answer)
             }
           >
-            {answer.text}
+            {`${String.fromCharCode(65 + index)}. ${answer.text}`}
           </div>
         ))}
       </div>
-      {showNextButton && (
-        <button className="nextButton" onClick={handleNextQuestion}>
-          Question suivante
-        </button>
-      )}
+      <div className="buttons-container">
+        {!showNextButton &&
+          !isValidating &&
+          (isDoubleChanceActive
+            ? selectedAnswers.length === 2 && (
+                <button
+                  className="validateButton"
+                  onClick={handleValidateDoubleChance}
+                >
+                  Valider
+                </button>
+              )
+            : selectedAnswer && (
+                <button className="validateButton" onClick={handleValidate}>
+                  Valider
+                </button>
+              ))}
+        {showNextButton && (
+          <button className="nextButton" onClick={handleNextQuestion}>
+            Question suivante
+          </button>
+        )}
+      </div>
     </div>
   );
 }

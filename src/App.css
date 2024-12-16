@@ -37,6 +37,13 @@
   justify-content: space-around;
 }
 
+.buttons-container {
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .question {
   width: 80%;
   background: linear-gradient(#100241, black);
@@ -479,4 +486,32 @@
 
 .nextButton:hover {
   background: #000080;
+}
+
+.validateButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #ffd700;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.validateButton:hover {
+  background: #ffed4a;
+}
+
+.answer.dual {
+  animation: none;
+}
+
+.answer.dual.correct {
+  background: green;
+}
+
+.answer.dual.wrong {
+  background: crimson;
 }
