@@ -1,15 +1,77 @@
 import React, { useEffect, useState } from "react";
 import useSound from "use-sound";
 import game from "../assets/main.mp3";
+import { MESSAGE_TYPES, ROLES, WS_URL } from "../config";
 
 export default function Start({ setUserName, setSelectedPart }) {
   const [playGame, { stop }] = useSound(game);
   const [gameStarted, setGameStarted] = useState(false);
+  const [ws, setWs] = useState(null);
+
+  useEffect(() => {
+    const websocket = new WebSocket(WS_URL);
+
+    websocket.onopen = () => {
+      console.log("Connecté au serveur WebSocket");
+      websocket.send(
+        JSON.stringify({
+          type: MESSAGE_TYPES.REGISTER,
+          role: ROLES.GAME,
+        })
+      );
+    };
+
+    websocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === MESSAGE_TYPES.BUTTON_CLICK) {
+        handleRemoteAction(data.button, data.value);
+      }
+    };
+
+    setWs(websocket);
+
+    return () => {
+      websocket.close();
+    };
+  }, []);
+
+  // Envoyer l'état de l'écran de démarrage
+  const broadcastGameState = () => {
+    if (ws) {
+      ws.send(
+        JSON.stringify({
+          type: MESSAGE_TYPES.GAME_STATE,
+          state: {
+            currentScreen: "start",
+            showPartSelection: gameStarted,
+          },
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    broadcastGameState();
+  }, [gameStarted]);
 
   useEffect(() => {
     playGame();
     return () => stop();
   }, [playGame, stop]);
+
+  const handleRemoteAction = (button, value) => {
+    switch (button) {
+      case "startGame":
+        handleStartGame();
+        break;
+      case "selectPart":
+        handleClick(value);
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleClick = (partNumber) => {
     stop();

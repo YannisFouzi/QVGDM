@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { MESSAGE_TYPES, ROLES, WS_URL } from "../config";
 
 export const Earned = ({
   earned,
@@ -8,7 +9,58 @@ export const Earned = ({
   setStop,
   setQuestionNumber,
 }) => {
-  // Déterminer les points gagnés en fonction du dernier palier atteint
+  const [ws, setWs] = useState(null);
+
+  useEffect(() => {
+    const websocket = new WebSocket(WS_URL);
+
+    websocket.onopen = () => {
+      console.log("Connecté au serveur WebSocket");
+      websocket.send(
+        JSON.stringify({
+          type: MESSAGE_TYPES.REGISTER,
+          role: ROLES.GAME,
+        })
+      );
+    };
+
+    websocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === MESSAGE_TYPES.BUTTON_CLICK) {
+        if (data.button === "restart") {
+          handleClick();
+        }
+      }
+    };
+
+    setWs(websocket);
+
+    return () => {
+      websocket.close();
+    };
+  }, []);
+
+  // Envoyer l'état de l'écran des gains
+  const broadcastGameState = () => {
+    if (ws) {
+      ws.send(
+        JSON.stringify({
+          type: MESSAGE_TYPES.GAME_STATE,
+          state: {
+            currentScreen: "earned",
+            finalPoints: calculateFinalPoints(),
+            userName,
+          },
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    broadcastGameState();
+  }, [earned, userName]);
+
   const calculateFinalPoints = () => {
     const earnedNumber = parseInt(earned);
     if (earnedNumber >= 10) {
