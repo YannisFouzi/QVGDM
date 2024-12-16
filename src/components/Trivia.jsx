@@ -61,9 +61,14 @@ export default function Trivia({
         break;
 
       case "fiftyFifty":
-        const wrongAnswers = question.answers.filter((a) => !a.correct);
-        const toHide = wrongAnswers.sort(() => 0.5 - Math.random()).slice(0, 2);
-        setHiddenAnswers(toHide);
+        const wrongAnswers = question.answers
+          .map((a, index) => ({ ...a, index }))
+          .filter((a) => !a.correct);
+        const toDisable = wrongAnswers
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 2)
+          .map((a) => a.index);
+        setHiddenAnswers(toDisable);
         setJokers({ ...jokers, fiftyFifty: false });
         break;
 
@@ -157,33 +162,22 @@ export default function Trivia({
       <Jokers jokers={jokers} onJokerUse={handleJoker} />
       <div className="question">{question?.question}</div>
       <div className="answers">
-        {question?.answers.map(
-          (a, index) =>
-            !hiddenAnswers.includes(a) && (
-              <div
-                key={index}
-                className={
-                  isDoubleChanceActive
-                    ? selectedAnswers.includes(a)
-                      ? className === "answer wrong" ||
-                        className === "answer correct"
-                        ? a.correct
-                          ? "answer correct"
-                          : selectedAnswers.includes(a)
-                          ? "answer wrong"
-                          : "answer"
-                        : className
-                      : "answer"
-                    : selectedAnswer === a
-                    ? className
-                    : "answer"
-                }
-                onClick={() => handleClick(a)}
-              >
-                {a.text}
-              </div>
-            )
-        )}
+        {question?.answers.map((answer, index) => (
+          <div
+            className={`answer ${selectedAnswer === answer && "active"} ${
+              correctAnswer === answer && "correct"
+            } ${
+              selectedAnswer === answer &&
+              selectedAnswer !== correctAnswer &&
+              "wrong"
+            } ${hiddenAnswers.includes(index) ? "disabled" : ""}`}
+            onClick={() =>
+              !hiddenAnswers.includes(index) && handleClick(answer)
+            }
+          >
+            {answer.text}
+          </div>
+        ))}
       </div>
     </div>
   );

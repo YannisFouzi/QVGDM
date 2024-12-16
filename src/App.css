@@ -457,3 +457,10 @@
   font-weight: bold;
   transition: none;
 }
+
+.answer.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: #666;
+}

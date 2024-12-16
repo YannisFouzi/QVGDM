@@ -8,29 +8,33 @@ export const Earned = ({
   setStop,
   setQuestionNumber,
 }) => {
-  //formatting amount
-  const convert = (num) => {
-    const localeString = new Intl.NumberFormat("en-US").format(num);
-    return localeString;
+  // Déterminer les points gagnés en fonction du dernier palier atteint
+  const calculateFinalPoints = () => {
+    const earnedNumber = parseInt(earned);
+    if (earnedNumber >= 10) {
+      return "10";
+    } else if (earnedNumber >= 5) {
+      return "5";
+    }
+    return "0";
   };
 
+  const finalPoints = calculateFinalPoints();
+
   const handleClick = () => {
-    // setting the username to null
     setUserName(null);
-    // setting earned to 0
     setEarned("0");
-    // setting stop to false
     setStop(false);
-    //setting question number to 1
     setQuestionNumber(1);
   };
+
   return (
     <>
-      {earned < 8000 ? (
+      {finalPoints < 8 ? (
         <div className="earnedContent">
           <div className="content">
             <h3 className="endText">
-              You Earned: {convert(earned)} point{earned > 1 ? "s" : ""}
+              You Earned: {finalPoints} point{finalPoints !== "1" ? "s" : ""}
             </h3>
             <button onClick={handleClick} className="tryAgain">
               Try Again
@@ -42,7 +46,7 @@ export const Earned = ({
           <div className="content">
             <h1 className="endText">Congratulations {userName}</h1>
             <h3 className="endText">
-              You Earned: {convert(earned)} point{earned > 1 ? "s" : ""}
+              You Earned: {finalPoints} point{finalPoints !== "1" ? "s" : ""}
             </h3>
             <button onClick={handleClick} className="tryAgain">
               Restart
