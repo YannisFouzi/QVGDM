@@ -26,15 +26,11 @@ function App() {
   const MoneyPyramidData = useMemo(() => MoneyPyramid, []);
 
   useEffect(() => {
-    //If the length of the list of questions is not equal to questionNumber, set the Earned amount to the amount that matches the questionNumber - 1 and id of the moneypyraid data. Else If the length of the list of questions is not equal, set the Earned amount to the amount that matches the questionNumber and id of the moneypyraid data
-    if (currentQuestions.length !== questionNumber) {
-      questionNumber > 1 &&
-        setEarned(MoneyPyramid.find((m) => m.id === questionNumber - 1).amount);
-    } else {
-      questionNumber > 1 &&
-        setEarned(MoneyPyramid.find((m) => m.id === questionNumber).amount);
+    if (questionNumber > currentQuestions.length) {
+      setStop(true);
+      setEarned(MoneyPyramid[questionNumber - 2].amount);
     }
-  }, [questionNumber]);
+  }, [questionNumber, currentQuestions.length, setStop, setEarned]);
 
   //formatting amount
   const convert = (num) => {
