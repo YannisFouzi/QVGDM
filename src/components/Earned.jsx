@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { MESSAGE_TYPES, ROLES, WS_URL } from "../config";
+import React, { useEffect } from "react";
+import { MESSAGE_TYPES, ROLES } from "../config";
+import { useWebSocket } from "../hooks/useWebSocket";
 
 export const Earned = ({
   earned,
@@ -9,57 +10,32 @@ export const Earned = ({
   setStop,
   setQuestionNumber,
 }) => {
-  const [ws, setWs] = useState(null);
+  const { isConnected, lastMessage, sendMessage } = useWebSocket(ROLES.GAME);
 
+  // Gérer les messages reçus
   useEffect(() => {
-    const websocket = new WebSocket(WS_URL);
+    if (!lastMessage) return;
+    if (lastMessage.type !== MESSAGE_TYPES.BUTTON_CLICK) return;
 
-    websocket.onopen = () => {
-      console.log("Connecté au serveur WebSocket");
-      websocket.send(
-        JSON.stringify({
-          type: MESSAGE_TYPES.REGISTER,
-          role: ROLES.GAME,
-        })
-      );
-    };
-
-    websocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.type === MESSAGE_TYPES.BUTTON_CLICK) {
-        if (data.button === "restart") {
-          handleClick();
-        }
-      }
-    };
-
-    setWs(websocket);
-
-    return () => {
-      websocket.close();
-    };
-  }, []);
-
-  // Envoyer l'état de l'écran des gains
-  const broadcastGameState = () => {
-    if (ws) {
-      ws.send(
-        JSON.stringify({
-          type: MESSAGE_TYPES.GAME_STATE,
-          state: {
-            currentScreen: "earned",
-            finalPoints: calculateFinalPoints(),
-            userName,
-          },
-        })
-      );
+    if (lastMessage.button === "restart") {
+      handleClick();
     }
-  };
+  }, [lastMessage]);
 
+  // Envoyer l'état
   useEffect(() => {
-    broadcastGameState();
-  }, [earned, userName]);
+    if (!isConnected) return;
+
+    sendMessage({
+      type: MESSAGE_TYPES.GAME_STATE,
+      state: {
+        currentScreen: "earned",
+        finalPoints: calculateFinalPoints(),
+        userName,
+        showRestartButton: true,
+      },
+    });
+  }, [isConnected, earned, userName]);
 
   const calculateFinalPoints = () => {
     const earnedNumber = parseInt(earned);

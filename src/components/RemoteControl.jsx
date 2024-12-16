@@ -113,6 +113,16 @@ export default function RemoteControl() {
           </div>
         </>
       )}
+
+      {isConnected && gameState.currentScreen === "earned" && (
+        <div className="earned-screen">
+          <p>Points gagnés : {gameState.finalPoints}</p>
+          <p>Joueur : {gameState.userName}</p>
+          {gameState.showRestartButton && (
+            <button onClick={() => sendButtonClick("restart")}>Rejouer</button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
