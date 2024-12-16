@@ -316,12 +316,12 @@
   width: 45%;
   background: #0000cd;
   color: #eee;
-  font-size: 1.1rem;
+  font-size: 1rem;
   outline: none;
   border: none;
   cursor: pointer;
   text-transform: uppercase;
-  transition: 1s ease;
+  transition: none;
 }
 
 .start .content .wrapper button:hover {
@@ -448,4 +448,12 @@
 .joker:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.start .content .wrapper .btn .full-width {
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: none;
 }
