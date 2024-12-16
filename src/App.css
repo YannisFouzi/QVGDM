@@ -464,3 +464,19 @@
   pointer-events: none;
   background: #666;
 }
+
+.nextButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #0000cd;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.nextButton:hover {
+  background: #000080;
+}

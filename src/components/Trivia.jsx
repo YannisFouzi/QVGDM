@@ -23,6 +23,7 @@ export default function Trivia({
   const [hiddenAnswers, setHiddenAnswers] = useState([]);
   const [isDoubleChanceActive, setIsDoubleChanceActive] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
+  const [showNextButton, setShowNextButton] = useState(false);
 
   //sound for correct answer
   const [playCorrectSound] = useSound(correct);
@@ -82,6 +83,21 @@ export default function Trivia({
     }
   };
 
+  const handleNextQuestion = () => {
+    if (questions.length > questionNumber) {
+      setQuestionNumber((prev) => prev + 1);
+      setSelectedAnswer(null);
+      setIsConfirming(false);
+      setClassName("answer");
+      setShowNextButton(false);
+    } else {
+      setStop(true);
+      setQuestionNumber(1);
+      setSelectedAnswer(null);
+      setIsConfirming(false);
+    }
+  };
+
   const handleClick = (a) => {
     if (isDoubleChanceActive) {
       if (!selectedAnswers.includes(a)) {
@@ -120,51 +136,34 @@ export default function Trivia({
         });
       }
     } else {
-      console.log("État actuel:", {
-        isConfirming,
-        selectedAnswer: selectedAnswer?.text,
-        clickedAnswer: a.text,
-        className,
-      });
-
       if (!isConfirming) {
-        console.log("Premier clic - Sélection initiale");
         setSelectedAnswer(a);
         setClassName("answer active");
         setIsConfirming(true);
       } else if (selectedAnswer === a) {
-        console.log("Même réponse cliquée, className:", className);
         if (className === "answer active") {
-          console.log("Confirmation de la réponse");
           setClassName("answer confirming");
           delay(1000, () => {
             if (a.correct) {
               setClassName("answer correct");
-              playCorrectSound();
-              delay(3000, () => {
-                if (questions.length > questionNumber) {
-                  setQuestionNumber((prev) => prev + 1);
-                  setSelectedAnswer(null);
-                  setIsConfirming(false);
-                  setClassName("answer");
-                } else {
-                  setStop(true);
-                  setQuestionNumber(1);
-                  setSelectedAnswer(null);
-                  setIsConfirming(false);
-                }
+              delay(1000, () => {
+                playCorrectSound();
+                delay(2000, () => {
+                  setShowNextButton(true);
+                });
               });
             } else {
               setClassName("answer wrong");
-              wrongAnswer();
-              delay(3000, () => {
-                setStop(true);
+              delay(1000, () => {
+                wrongAnswer();
+                delay(2000, () => {
+                  setStop(true);
+                });
               });
             }
           });
         }
       } else {
-        console.log("Changement de réponse");
         setSelectedAnswer(a);
         setClassName("answer active");
         setIsConfirming(true);
@@ -219,6 +218,11 @@ export default function Trivia({
           </div>
         ))}
       </div>
+      {showNextButton && (
+        <button className="nextButton" onClick={handleNextQuestion}>
+          Question suivante
+        </button>
+      )}
     </div>
   );
 }
