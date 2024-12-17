@@ -1,6 +1,6 @@
 export const WS_URL =
   process.env.NODE_ENV === "production"
-    ? "wss://votre-nom-app.railway.app"
+    ? "wss://votre-serveur-websocket.onrender.com"
     : `ws://${window.location.hostname}:3002`;
 
 export const ROLES = {
