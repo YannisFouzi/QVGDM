@@ -1,14 +1,29 @@
 const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
+const http = require("http");
 
 const PORT = process.env.PORT || 3002;
+
+// Créer un serveur HTTP
+const server = http.createServer();
+
+// Configurer le serveur WebSocket avec le serveur HTTP
 const wss = new WebSocket.Server({
-  port: PORT,
+  server,
   perMessageDeflate: false,
   clientTracking: true,
   verifyClient: (info) => {
-    // Accepter toutes les origines en production
-    return true;
+    const origin = info.origin || info.req.headers.origin;
+    // En développement, accepter localhost
+    if (process.env.NODE_ENV !== "production") {
+      return true;
+    }
+    // En production, vérifier l'origine
+    const allowedOrigins = [
+      "https://votre-vrai-domaine.vercel.app",
+      "https://votre-vrai-domaine-git-main.vercel.app",
+    ];
+    return allowedOrigins.includes(origin);
   },
 });
 
@@ -151,4 +166,7 @@ wss.on("connection", (ws) => {
   });
 });
 
-console.log(`[Server] WebSocket server is listening on port ${PORT}`);
+// Démarrer le serveur HTTP au lieu du serveur WebSocket directement
+server.listen(PORT, () => {
+  console.log(`[Server] WebSocket server is listening on port ${PORT}`);
+});

@@ -1,0 +1,11 @@
+[build]
+builder = "nixpacks"
+buildCommand = "npm install"
+
+[deploy]
+startCommand = "node index.js"
+healthcheckPath = "/"
+restartPolicyType = "on_failure"
+
+[deploy.env]
+NODE_ENV = "production"
