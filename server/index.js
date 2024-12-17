@@ -20,8 +20,9 @@ const wss = new WebSocket.Server({
     }
     // En production, vérifier l'origine
     const allowedOrigins = [
-      "https://votre-vrai-domaine.vercel.app",
-      "https://votre-vrai-domaine-git-main.vercel.app",
+      "https://qvgdm.vercel.app",
+      "https://qvgdm-git-main.vercel.app",
+      "http://localhost:3000",
     ];
     return allowedOrigins.includes(origin);
   },

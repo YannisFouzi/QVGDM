@@ -1,6 +1,6 @@
 export const WS_URL =
   process.env.NODE_ENV === "production"
-    ? process.env.REACT_APP_WS_URL || "wss://votre-app.up.railway.app"
+    ? "wss://web-production-9f7c.up.railway.app"
     : `ws://${window.location.hostname}:3002`;
 
 export const ROLES = {
