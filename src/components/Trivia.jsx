@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import useSound from "use-sound";
-import correct from "../assets/sounds_correct.mp3";
-import play from "../assets/sounds_play.mp3";
-import wrong from "../assets/sounds_wrong.mp3";
+import correctSound from "../assets/sounds_correct.mp3";
+import playSound from "../assets/sounds_play.mp3";
+import wrongSound from "../assets/sounds_wrong.mp3";
 import { MESSAGE_TYPES, ROLES } from "../config";
+import { useAudio } from "../hooks/useAudio";
 import { useWebSocket } from "../hooks/useWebSocket";
 import Jokers from "./Jokers";
 
@@ -28,18 +28,13 @@ export default function Trivia({
   const [showNextButton, setShowNextButton] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [wsReady, setWsReady] = useState(false);
-
-  //sound for correct answer
-  const [playCorrectSound] = useSound(correct);
-  //sound for wrong answer
-  const [wrongAnswer] = useSound(wrong);
-  //initial sound for the start of the quiz
-  const [letsPlay] = useSound(play);
+  const { play: playStart } = useAudio(playSound);
+  const { play: playCorrect } = useAudio(correctSound);
+  const { play: playWrong } = useAudio(wrongSound);
 
   useEffect(() => {
-    // play the sound on componentDidMount
-    letsPlay();
-  }, [letsPlay]);
+    playStart();
+  }, []);
 
   useEffect(() => {
     // setting the question from the list of questions
@@ -91,33 +86,37 @@ export default function Trivia({
     delay(1000, () => {
       if (selectedAnswer.correct) {
         setClassName("answer correct");
-        delay(1000, () => {
-          playCorrectSound();
-          delay(2000, () => {
-            setShowNextButton(true);
-            sendMessage({
-              type: MESSAGE_TYPES.GAME_STATE,
-              state: {
-                currentScreen: "game",
-                showNextButton: true,
-                showValidateButton: false,
-                selectedAnswers,
-                isDoubleChanceActive,
-                isValidating: true,
-                question,
-                jokers,
-                hiddenAnswers,
-                selectedAnswer,
-              },
+        delay(500, () => {
+          playCorrect();
+          delay(1000, () => {
+            delay(2000, () => {
+              setShowNextButton(true);
+              sendMessage({
+                type: MESSAGE_TYPES.GAME_STATE,
+                state: {
+                  currentScreen: "game",
+                  showNextButton: true,
+                  showValidateButton: false,
+                  selectedAnswers,
+                  isDoubleChanceActive,
+                  isValidating: true,
+                  question,
+                  jokers,
+                  hiddenAnswers,
+                  selectedAnswer,
+                },
+              });
             });
           });
         });
       } else {
         setClassName("answer wrong");
-        delay(1000, () => {
-          wrongAnswer();
-          delay(2000, () => {
-            setStop(true);
+        delay(500, () => {
+          playWrong();
+          delay(1000, () => {
+            delay(2000, () => {
+              setStop(true);
+            });
           });
         });
       }
@@ -134,33 +133,37 @@ export default function Trivia({
 
       if (correctAnswer) {
         setClassName("answer dual");
-        delay(1000, () => {
-          playCorrectSound();
-          delay(2000, () => {
-            setShowNextButton(true);
-            sendMessage({
-              type: MESSAGE_TYPES.GAME_STATE,
-              state: {
-                currentScreen: "game",
-                showNextButton: true,
-                showValidateButton: false,
-                selectedAnswers,
-                isDoubleChanceActive,
-                isValidating: true,
-                question,
-                jokers,
-                hiddenAnswers,
-                selectedAnswer,
-              },
+        delay(500, () => {
+          playCorrect();
+          delay(1000, () => {
+            delay(2000, () => {
+              setShowNextButton(true);
+              sendMessage({
+                type: MESSAGE_TYPES.GAME_STATE,
+                state: {
+                  currentScreen: "game",
+                  showNextButton: true,
+                  showValidateButton: false,
+                  selectedAnswers,
+                  isDoubleChanceActive,
+                  isValidating: true,
+                  question,
+                  jokers,
+                  hiddenAnswers,
+                  selectedAnswer,
+                },
+              });
             });
           });
         });
       } else {
         setClassName("answer wrong");
-        delay(1000, () => {
-          wrongAnswer();
-          delay(2000, () => {
-            setStop(true);
+        delay(500, () => {
+          playWrong();
+          delay(1000, () => {
+            delay(2000, () => {
+              setStop(true);
+            });
           });
         });
       }

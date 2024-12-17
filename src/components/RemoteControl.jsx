@@ -32,6 +32,13 @@ export default function RemoteControl() {
     });
   };
 
+  const handleStartClick = () => {
+    sendMessage({
+      type: MESSAGE_TYPES.BUTTON_CLICK,
+      button: "start",
+    });
+  };
+
   return (
     <div className="remote-control">
       {!isConnected && (
@@ -40,20 +47,19 @@ export default function RemoteControl() {
         </div>
       )}
 
-      {isConnected && gameState.currentScreen === "start" && (
+      {gameState.currentScreen === "start" && (
         <div className="start-buttons">
-          <button onClick={() => sendButtonClick("startGame")}>
-            COMMENCER PARTIE
-          </button>
-          {gameState.showPartSelection && (
-            <>
+          {!gameState.showPartSelection ? (
+            <button onClick={handleStartClick}>Commencer partie</button>
+          ) : (
+            <div className="part-selection">
               <button onClick={() => sendButtonClick("selectPart", 1)}>
                 Damien & Lucca
               </button>
               <button onClick={() => sendButtonClick("selectPart", 2)}>
                 Julien & Steven
               </button>
-            </>
+            </div>
           )}
         </div>
       )}

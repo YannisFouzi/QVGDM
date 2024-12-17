@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import useSound from "use-sound";
-import game from "../assets/main.mp3";
+import mainSound from "../assets/main.mp3";
 import { MESSAGE_TYPES, ROLES, WS_URL } from "../config";
+import { useAudio } from "../hooks/useAudio";
 
 export default function Start({ setUserName, setSelectedPart }) {
-  const [playGame, { stop }] = useSound(game);
   const [gameStarted, setGameStarted] = useState(false);
   const [ws, setWs] = useState(null);
+  const { play: playMain } = useAudio(mainSound);
 
   useEffect(() => {
     const websocket = new WebSocket(WS_URL);
@@ -55,14 +55,9 @@ export default function Start({ setUserName, setSelectedPart }) {
     broadcastGameState();
   }, [gameStarted]);
 
-  useEffect(() => {
-    playGame();
-    return () => stop();
-  }, [playGame, stop]);
-
   const handleRemoteAction = (button, value) => {
     switch (button) {
-      case "startGame":
+      case "start":
         handleStartGame();
         break;
       case "selectPart":
@@ -74,12 +69,12 @@ export default function Start({ setUserName, setSelectedPart }) {
   };
 
   const handleClick = (partNumber) => {
-    stop();
     setUserName("Player");
     setSelectedPart(partNumber);
   };
 
   const handleStartGame = () => {
+    playMain();
     setGameStarted(true);
   };
 

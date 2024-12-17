@@ -62,10 +62,11 @@ export const Earned = ({
         <div className="earnedContent">
           <div className="content">
             <h3 className="endText">
-              You Earned: {finalPoints} point{finalPoints !== "1" ? "s" : ""}
+              Vous avez gagné : {finalPoints} point
+              {finalPoints !== "1" ? "s" : ""}
             </h3>
             <button onClick={handleClick} className="tryAgain">
-              Try Again
+              Menu principal
             </button>
           </div>
         </div>
@@ -74,7 +75,8 @@ export const Earned = ({
           <div className="content">
             <h1 className="endText">Congratulations {userName}</h1>
             <h3 className="endText">
-              You Earned: {finalPoints} point{finalPoints !== "1" ? "s" : ""}
+              Vous avez gagné: {finalPoints} point
+              {finalPoints !== "1" ? "s" : ""}
             </h3>
             <button onClick={handleClick} className="tryAgain">
               Restart
