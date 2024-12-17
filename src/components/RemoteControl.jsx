@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MESSAGE_TYPES, ROLES } from "../config";
 import { useWebSocket } from "../hooks/useWebSocket";
+import "./RemoteControl.css";
 
 export default function RemoteControl() {
   const [gameState, setGameState] = useState({

@@ -1,0 +1,106 @@
+.remote-control {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  background: linear-gradient(45deg, #1a237e, #311b92);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.connection-status {
+  color: #ffffff;
+  text-align: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.start-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.start-buttons button,
+.answer-buttons button,
+.game-buttons button,
+.joker-buttons button {
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(#0e0124, #22074d);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.start-buttons button:hover,
+.answer-buttons button:hover,
+.game-buttons button:hover,
+.joker-buttons button:not(:disabled):hover {
+  background: mediumblue;
+  transform: scale(1.02);
+}
+
+.question-info {
+  color: white;
+  text-align: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.answer-buttons {
+  display: grid;
+  gap: 10px;
+}
+
+.answer-buttons button.active {
+  background: mediumblue;
+}
+
+.game-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.game-buttons .next-button {
+  background: #4caf50;
+}
+
+.joker-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.joker-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #666;
+}
+
+.earned-screen {
+  color: white;
+  text-align: center;
+}
+
+.earned-screen p {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+@media (max-width: 600px) {
+  .remote-control {
+    margin: 0;
+    border-radius: 0;
+    padding: 15px;
+  }
+}
