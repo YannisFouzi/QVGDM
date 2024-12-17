@@ -1,7 +1,7 @@
 export const WS_URL =
   process.env.NODE_ENV === "production"
     ? "wss://votre-app.railway.app"
-    : "ws://localhost:3002";
+    : `ws://${window.location.hostname}:3002`;
 
 export const ROLES = {
   GAME: "game",
