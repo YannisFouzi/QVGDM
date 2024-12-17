@@ -2,8 +2,15 @@ const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
 
 const PORT = process.env.PORT || 3002;
-const server = require("http").createServer();
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({
+  port: PORT,
+  perMessageDeflate: false,
+  clientTracking: true,
+  verifyClient: (info) => {
+    // Accepter toutes les origines en production
+    return true;
+  },
+});
 
 // Gestion des connexions
 let gameConnection = null;
@@ -144,6 +151,4 @@ wss.on("connection", (ws) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`[Server] WebSocket server is listening on port ${PORT}`);
-});
+console.log(`[Server] WebSocket server is listening on port ${PORT}`);
