@@ -2,7 +2,15 @@ const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
 
 const PORT = process.env.PORT || 3002;
-const wss = new WebSocket.Server({ port: PORT });
+const wss = new WebSocket.Server({
+  port: PORT,
+  perMessageDeflate: false,
+  clientTracking: true,
+  verifyClient: (info) => {
+    // Accepter toutes les origines en production
+    return true;
+  },
+});
 
 // Gestion des connexions
 let gameConnection = null;
