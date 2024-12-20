@@ -17,6 +17,7 @@ function App() {
   //state for seeting amount earned
   const [earned, setEarned] = useState("0");
   const [selectedPart, setSelectedPart] = useState(null);
+  const [showNextButton, setShowNextButton] = useState(false);
 
   // Sélectionner la liste de questions appropriée
   const currentQuestions =
@@ -31,25 +32,26 @@ function App() {
       if (questionNumber === currentQuestions.length) {
         setEarned("20"); // Victoire totale = 20 points
       } else {
-        // Logique pour les paliers si le joueur s'arrête avant
-        const currentQuestionIndex = questionNumber - 2;
-        if (currentQuestionIndex >= 0) {
-          if (currentQuestionIndex >= 9) {
+        // Si le joueur a répondu correctement à la question actuelle
+        if (showNextButton) {
+          setEarned(questionNumber.toString());
+        } else {
+          // Si le joueur quitte pendant une question, on regarde le dernier palier atteint
+          const lastCompletedQuestion = questionNumber - 1;
+          if (lastCompletedQuestion >= 10) {
             // Palier 10 atteint (12 points garantis)
             setEarned("12");
-          } else if (currentQuestionIndex >= 4) {
+          } else if (lastCompletedQuestion >= 5) {
             // Palier 5 atteint (5 points garantis)
             setEarned("5");
           } else {
-            // Sinon le joueur gagne les points de la dernière question réussie
-            setEarned(currentQuestionIndex + 1);
+            // Pas encore de palier atteint, donc 0 point
+            setEarned("0");
           }
-        } else {
-          setEarned("0");
         }
       }
     }
-  }, [questionNumber, currentQuestions.length, stop]);
+  }, [questionNumber, currentQuestions.length, stop, showNextButton]);
 
   //formatting amount
   const convert = (num) => {
@@ -80,6 +82,7 @@ function App() {
                     setQuestionNumber={setQuestionNumber}
                     questionNumber={questionNumber}
                     questions={currentQuestions}
+                    setShowNextButton={setShowNextButton}
                   />
                 </div>
               </>

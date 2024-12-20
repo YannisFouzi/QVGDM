@@ -13,6 +13,7 @@ export default function Trivia({
   setQuestionNumber,
   questionNumber,
   questions,
+  setShowNextButton,
 }) {
   const [question, setQuestion] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -26,14 +27,13 @@ export default function Trivia({
   const [hiddenAnswers, setHiddenAnswers] = useState([]);
   const [isDoubleChanceActive, setIsDoubleChanceActive] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
-  const [showNextButton, setShowNextButton] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
-  const [wsReady, setWsReady] = useState(false);
+  const [visibleAnswers, setVisibleAnswers] = useState([]);
+  const [showNextButton, setLocalShowNextButton] = useState(false);
   const { play: playStart } = useAudio(playSound);
   const { play: playCorrect } = useAudio(correctSound);
   const { play: playWrong } = useAudio(wrongSound);
   const { play: playVictory } = useAudio(victorySound);
-  const [visibleAnswers, setVisibleAnswers] = useState([]);
 
   useEffect(() => {
     playStart();
@@ -96,23 +96,30 @@ export default function Trivia({
               if (questionNumber === questions.length) {
                 setStop(true);
               } else {
+                setLocalShowNextButton(true);
                 setShowNextButton(true);
               }
-              sendMessage({
-                type: MESSAGE_TYPES.GAME_STATE,
-                state: {
-                  currentScreen: "game",
-                  showNextButton: questionNumber < questions.length,
-                  showValidateButton: false,
-                  selectedAnswers,
-                  isDoubleChanceActive,
-                  isValidating: true,
-                  question,
-                  jokers,
-                  hiddenAnswers,
-                  selectedAnswer,
-                },
-              });
+              if (isConnected) {
+                try {
+                  sendMessage({
+                    type: MESSAGE_TYPES.GAME_STATE,
+                    state: {
+                      currentScreen: "game",
+                      showNextButton: questionNumber < questions.length,
+                      showValidateButton: false,
+                      selectedAnswers,
+                      isDoubleChanceActive,
+                      isValidating: true,
+                      question,
+                      jokers,
+                      hiddenAnswers,
+                      selectedAnswer,
+                    },
+                  });
+                } catch (error) {
+                  console.log("WebSocket not ready yet");
+                }
+              }
             });
           });
         });
@@ -147,23 +154,30 @@ export default function Trivia({
               if (questionNumber === questions.length) {
                 setStop(true);
               } else {
+                setLocalShowNextButton(true);
                 setShowNextButton(true);
               }
-              sendMessage({
-                type: MESSAGE_TYPES.GAME_STATE,
-                state: {
-                  currentScreen: "game",
-                  showNextButton: questionNumber < questions.length,
-                  showValidateButton: false,
-                  selectedAnswers,
-                  isDoubleChanceActive,
-                  isValidating: true,
-                  question,
-                  jokers,
-                  hiddenAnswers,
-                  selectedAnswer,
-                },
-              });
+              if (isConnected) {
+                try {
+                  sendMessage({
+                    type: MESSAGE_TYPES.GAME_STATE,
+                    state: {
+                      currentScreen: "game",
+                      showNextButton: questionNumber < questions.length,
+                      showValidateButton: false,
+                      selectedAnswers,
+                      isDoubleChanceActive,
+                      isValidating: true,
+                      question,
+                      jokers,
+                      hiddenAnswers,
+                      selectedAnswer,
+                    },
+                  });
+                } catch (error) {
+                  console.log("WebSocket not ready yet");
+                }
+              }
             });
           });
         });
@@ -257,26 +271,28 @@ export default function Trivia({
   useEffect(() => {
     if (!isConnected) return;
 
-    const gameState = {
-      currentScreen: "game",
-      showNextButton,
-      showValidateButton:
-        !isValidating &&
-        ((selectedAnswer && !isDoubleChanceActive) || // Mode normal
-          (selectedAnswers.length > 0 && isDoubleChanceActive)), // Mode double chance
-      selectedAnswers,
-      isDoubleChanceActive,
-      isValidating,
-      question,
-      jokers,
-      hiddenAnswers,
-      selectedAnswer,
-    };
-
-    sendMessage({
-      type: MESSAGE_TYPES.GAME_STATE,
-      state: gameState,
-    });
+    try {
+      sendMessage({
+        type: MESSAGE_TYPES.GAME_STATE,
+        state: {
+          currentScreen: "game",
+          showNextButton,
+          showValidateButton:
+            !isValidating &&
+            ((selectedAnswer && !isDoubleChanceActive) || // Mode normal
+              (selectedAnswers.length > 0 && isDoubleChanceActive)), // Mode double chance
+          selectedAnswers,
+          isDoubleChanceActive,
+          isValidating,
+          question,
+          jokers,
+          hiddenAnswers,
+          selectedAnswer,
+        },
+      });
+    } catch (error) {
+      console.log("WebSocket not ready yet");
+    }
   }, [
     isConnected,
     showNextButton,
@@ -290,10 +306,8 @@ export default function Trivia({
   ]);
 
   const handleNextQuestion = () => {
-    // Vérifier si c'est la dernière question (15)
     if (questionNumber === questions.length) {
       setStop(true);
-      // Pas besoin de réinitialiser les autres états car le jeu se termine
       return;
     }
 
@@ -302,6 +316,7 @@ export default function Trivia({
       setSelectedAnswer(null);
       setIsConfirming(false);
       setClassName("answer");
+      setLocalShowNextButton(false);
       setShowNextButton(false);
       setIsValidating(false);
       setIsDoubleChanceActive(false);
@@ -338,9 +353,32 @@ export default function Trivia({
     }
   }, [question]); // Se déclenche quand la question change
 
+  const handleQuit = () => {
+    if (showNextButton) {
+      setShowNextButton(true);
+      setTimeout(() => {
+        setStop(true);
+      }, 100);
+    } else {
+      setStop(true);
+    }
+  };
+
+  // Pas besoin de l'effet de synchronisation qui causait des problèmes
+  useEffect(() => {
+    if (setShowNextButton && showNextButton !== undefined) {
+      setShowNextButton(showNextButton);
+    }
+  }, [showNextButton, setShowNextButton]);
+
   return (
     <div className="trivia">
-      <Jokers jokers={jokers} onJokerUse={handleJoker} />
+      <div className="top-buttons">
+        <Jokers jokers={jokers} onJokerUse={handleJoker} />
+        <button className="quitButton" onClick={handleQuit}>
+          Quitter la partie
+        </button>
+      </div>
       <div className="question">{question?.question}</div>
       <div className="answers">
         {question?.answers.map((answer, index) => (
