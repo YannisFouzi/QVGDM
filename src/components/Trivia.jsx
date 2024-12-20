@@ -371,10 +371,15 @@ export default function Trivia({
   return (
     <div className="trivia">
       <div className="top-buttons">
-        <Jokers jokers={jokers} onJokerUse={handleJoker} />
-        <button className="quitButton" onClick={handleQuit}>
-          Quitter la partie
-        </button>
+        <div className="empty-section"></div>
+        <div className="jokers">
+          <Jokers
+            jokers={jokers}
+            onJokerUse={handleJoker}
+            onQuit={handleQuit}
+          />
+        </div>
+        <div className="empty-section"></div>
       </div>
       <div className="question">{question?.question}</div>
       <div className="answers">
