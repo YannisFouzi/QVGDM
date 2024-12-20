@@ -265,6 +265,10 @@ export default function Trivia({
     if (button === "joker" && !isValidating) {
       handleJoker(value);
     }
+
+    if (button === "quit") {
+      handleQuit();
+    }
   }, [lastMessage, showNextButton]); // Ajouter showNextButton aux dépendances
 
   // Un autre useEffect simple pour l'état
@@ -354,14 +358,7 @@ export default function Trivia({
   }, [question]); // Se déclenche quand la question change
 
   const handleQuit = () => {
-    if (showNextButton) {
-      setShowNextButton(true);
-      setTimeout(() => {
-        setStop(true);
-      }, 100);
-    } else {
-      setStop(true);
-    }
+    setStop(true);
   };
 
   // Pas besoin de l'effet de synchronisation qui causait des problèmes

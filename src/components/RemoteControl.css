@@ -97,6 +97,32 @@
   font-size: 18px;
 }
 
+.top-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.quitButton {
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  background: linear-gradient(45deg, #d32f2f, #b71c1c);
+  border: 2px solid #ef5350;
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.quitButton:hover {
+  background: linear-gradient(45deg, #ef5350, #d32f2f);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(239, 83, 80, 0.4);
+}
+
 @media (max-width: 600px) {
   .remote-control {
     margin: 0;

@@ -23,7 +23,12 @@ export default function RemoteControl() {
   const sendButtonClick = (buttonType, value = null) => {
     if (!isConnected) return;
 
-    if (gameState.isValidating && buttonType !== "next") return;
+    if (
+      gameState.isValidating &&
+      buttonType !== "next" &&
+      buttonType !== "quit"
+    )
+      return;
 
     console.log("Sending button click:", buttonType, value);
     sendMessage({
@@ -69,6 +74,15 @@ export default function RemoteControl() {
         <>
           <div className="question-info">
             {gameState.question && <p>{gameState.question.question}</p>}
+          </div>
+
+          <div className="top-buttons">
+            <button
+              className="quitButton"
+              onClick={() => sendButtonClick("quit")}
+            >
+              Quitter la partie
+            </button>
           </div>
 
           <div className="answer-buttons">
