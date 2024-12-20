@@ -31,6 +31,7 @@ export default function Trivia({
   const { play: playStart } = useAudio(playSound);
   const { play: playCorrect } = useAudio(correctSound);
   const { play: playWrong } = useAudio(wrongSound);
+  const [visibleAnswers, setVisibleAnswers] = useState([]);
 
   useEffect(() => {
     playStart();
@@ -301,6 +302,34 @@ export default function Trivia({
     }
   };
 
+  useEffect(() => {
+    // Réinitialiser les réponses visibles quand la question change
+    setVisibleAnswers([]);
+
+    // Afficher progressivement les réponses
+    if (question) {
+      // Afficher la première réponse après 2 secondes
+      setTimeout(() => {
+        setVisibleAnswers([0]);
+
+        // Afficher la deuxième réponse après 4 secondes
+        setTimeout(() => {
+          setVisibleAnswers([0, 1]);
+
+          // Afficher la troisième réponse après 6 secondes
+          setTimeout(() => {
+            setVisibleAnswers([0, 1, 2]);
+
+            // Afficher la quatrième réponse après 8 secondes
+            setTimeout(() => {
+              setVisibleAnswers([0, 1, 2, 3]);
+            }, 2000);
+          }, 2000);
+        }, 2000);
+      }, 2000);
+    }
+  }, [question]); // Se déclenche quand la question change
+
   return (
     <div className="trivia">
       <Jokers jokers={jokers} onJokerUse={handleJoker} />
@@ -310,6 +339,7 @@ export default function Trivia({
           <div
             key={index}
             className={`answer 
+              ${!visibleAnswers.includes(index) ? "hidden" : ""} 
               ${
                 isDoubleChanceActive
                   ? selectedAnswers.includes(answer)
@@ -334,7 +364,9 @@ export default function Trivia({
               }
               ${hiddenAnswers.includes(index) ? "disabled" : ""}`}
             onClick={() =>
-              !hiddenAnswers.includes(index) && handleClick(answer)
+              !hiddenAnswers.includes(index) &&
+              visibleAnswers.includes(index) &&
+              handleClick(answer)
             }
           >
             {`${String.fromCharCode(65 + index)}. ${answer.text}`}
