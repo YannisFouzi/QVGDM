@@ -112,51 +112,6 @@ export const ListOfQuestionsPartie2 = [
   },
   {
     id: 6,
-    question: "Quel pays a été le premier hôte de la Coupe du Monde en 1930 ?",
-    answers: [
-      {
-        text: "Italie",
-        correct: false,
-      },
-      {
-        text: "Uruguay",
-        correct: true,
-      },
-      {
-        text: "Brésil",
-        correct: false,
-      },
-      {
-        text: "Argentine",
-        correct: false,
-      },
-    ],
-  },
-  {
-    id: 7,
-    question:
-      "Quelle nation a remporté la Coupe d'Afrique des Nations en 2021 ?",
-    answers: [
-      {
-        text: "Sénégal",
-        correct: true,
-      },
-      {
-        text: "Cameroun",
-        correct: false,
-      },
-      {
-        text: "Égypte",
-        correct: false,
-      },
-      {
-        text: "Algérie",
-        correct: false,
-      },
-    ],
-  },
-  {
-    id: 8,
     question:
       "Quel joueur a marqué un doublé en finale de la Coupe du Monde 1998 ?",
     answers: [
@@ -178,6 +133,53 @@ export const ListOfQuestionsPartie2 = [
       },
     ],
   },
+
+  {
+    id: 7,
+    question:
+      "Quelle nation a remporté la Coupe d'Afrique des Nations (CAN) en 2024 ?",
+    answers: [
+      {
+        text: "Côte d'Ivoire",
+        correct: true,
+      },
+      {
+        text: "Cameroun",
+        correct: false,
+      },
+      {
+        text: "Égypte",
+        correct: false,
+      },
+      {
+        text: "Algérie",
+        correct: false,
+      },
+    ],
+  },
+  {
+    id: 8,
+    question: "Quel pays a été le premier hôte de la Coupe du Monde en 1930 ?",
+    answers: [
+      {
+        text: "Italie",
+        correct: false,
+      },
+      {
+        text: "Uruguay",
+        correct: true,
+      },
+      {
+        text: "Brésil",
+        correct: false,
+      },
+      {
+        text: "Argentine",
+        correct: false,
+      },
+    ],
+  },
+
   {
     id: 9,
     question:
@@ -253,11 +255,11 @@ export const ListOfQuestionsPartie2 = [
       "Quel joueur a inscrit un quadruplé contre le Real Madrid en Ligue des Champions en 2013 ?",
     answers: [
       {
-        text: "Cristiano Ronaldo",
+        text: "Gareth Bale",
         correct: false,
       },
       {
-        text: "Lionel Messi",
+        text: "Thomas Müller",
         correct: false,
       },
       {
@@ -265,7 +267,7 @@ export const ListOfQuestionsPartie2 = [
         correct: true,
       },
       {
-        text: "Karim Benzema",
+        text: "Edinson Cavani",
         correct: false,
       },
     ],
@@ -319,7 +321,7 @@ export const ListOfQuestionsPartie2 = [
   {
     id: 15,
     question:
-      "Quel joueur a inscrit le but le plus rapide de l'histoire de la Coupe du Monde (10,8 secondes) ?",
+      "Quel joueur a inscrit le but le plus rapide de l'histoire de la Coupe du Monde ?",
     answers: [
       {
         text: "Hakan Şükür",

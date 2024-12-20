@@ -2,7 +2,7 @@ const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
 const http = require("http");
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 
 // Créer un serveur HTTP
 const server = http.createServer();

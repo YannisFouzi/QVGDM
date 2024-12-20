@@ -46,22 +46,22 @@ export const ListOfQuestions = [
   },
   {
     id: 3,
-    question: 'Qui est surnommé "La Pulga" ?',
+    question: "Quel trophée est remis au vainqueur de la Coupe du Monde ?",
     answers: [
       {
-        text: "Cristiano Ronaldo",
+        text: "La Ligue des Champions",
         correct: false,
       },
       {
-        text: "Lionel Messi",
+        text: "Le Ballon d'Or",
+        correct: false,
+      },
+      {
+        text: "La Coupe Jules Rimet",
         correct: true,
       },
       {
-        text: "Neymar",
-        correct: false,
-      },
-      {
-        text: "Mbappé",
+        text: "La Coupe Henri Delaunay",
         correct: false,
       },
     ],
@@ -113,7 +113,7 @@ export const ListOfQuestions = [
   },
   {
     id: 6,
-    question: "Combien de Ballons d'Or Zinédine Zidane a-t-il remportés ?",
+    question: "Combien de Ballon(s) d'Or Zinédine Zidane a-t-il remporté(s) ?",
     answers: [
       {
         text: "Aucun",
@@ -180,23 +180,23 @@ export const ListOfQuestions = [
     ],
   },
   {
-    id: 9,
-    question: "Quel trophée est remis au vainqueur de la Coupe du Monde ?",
+    id: 3,
+    question: 'Qui est surnommé "La Pulga" ?',
     answers: [
       {
-        text: "La Ligue des Champions",
+        text: "Cristiano Ronaldo",
         correct: false,
       },
       {
-        text: "Le Ballon d'Or",
-        correct: false,
-      },
-      {
-        text: "La Coupe Jules Rimet",
+        text: "Lionel Messi",
         correct: true,
       },
       {
-        text: "La Coupe Henri Delaunay",
+        text: "Neymar",
+        correct: false,
+      },
+      {
+        text: "Mbappé",
         correct: false,
       },
     ],
@@ -319,22 +319,22 @@ export const ListOfQuestions = [
   {
     id: 15,
     question:
-      "Quelle équipe nationale a perdu trois finales de Coupe du Monde sans en gagner une seule ?",
+      "Quel joueur a marqué le but le plus rapide de l'histoire de la Ligue des Champions ?",
     answers: [
       {
-        text: "Pays-Bas",
+        text: "Roy Makaay",
         correct: true,
       },
       {
-        text: "Hongrie",
+        text: "Cristiano Ronaldo",
         correct: false,
       },
       {
-        text: "Suède",
+        text: "Paolo Maldini",
         correct: false,
       },
       {
-        text: "Croatie",
+        text: "Lionel Messi",
         correct: false,
       },
     ],
