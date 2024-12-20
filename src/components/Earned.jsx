@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
+import victorySound from "../assets/sounds_victory.mp3";
 import { MESSAGE_TYPES, ROLES } from "../config";
+import { useAudio } from "../hooks/useAudio";
 import { useWebSocket } from "../hooks/useWebSocket";
 
 export const Earned = ({
@@ -11,6 +13,7 @@ export const Earned = ({
   setQuestionNumber,
 }) => {
   const { isConnected, lastMessage, sendMessage } = useWebSocket(ROLES.GAME);
+  const { play: playVictory } = useAudio(victorySound);
 
   // Gérer les messages reçus
   useEffect(() => {
@@ -37,9 +40,18 @@ export const Earned = ({
     });
   }, [isConnected, earned, userName]);
 
+  // Jouer le son de victoire quand c'est une victoire totale
+  useEffect(() => {
+    if (parseInt(earned) === 15) {
+      playVictory();
+    }
+  }, []); // On ne le joue qu'une fois au montage du composant
+
   const calculateFinalPoints = () => {
     const earnedNumber = parseInt(earned);
-    if (earnedNumber >= 10) {
+    if (earnedNumber === 15) {
+      return "15";
+    } else if (earnedNumber >= 10) {
       return "10";
     } else if (earnedNumber >= 5) {
       return "5";
@@ -58,31 +70,47 @@ export const Earned = ({
 
   return (
     <>
-      {finalPoints < 8 ? (
-        <div className="earnedContent">
+      {finalPoints === "15" ? (
+        <div className="earnedContent congrats">
           <div className="content">
+            <h1 className="endText">Félicitations !</h1>
             <h3 className="endText">
-              Vous avez gagné : {finalPoints} point
-              {finalPoints !== "1" ? "s" : ""}
+              Vous avez atteint le score maximum : {finalPoints} points !
             </h3>
             <button onClick={handleClick} className="tryAgain">
-              Menu principal
+              Rejouer
             </button>
           </div>
         </div>
       ) : (
-        <div className="earnedContent congrats">
-          <div className="content">
-            <h1 className="endText">Congratulations {userName}</h1>
-            <h3 className="endText">
-              Vous avez gagné: {finalPoints} point
-              {finalPoints !== "1" ? "s" : ""}
-            </h3>
-            <button onClick={handleClick} className="tryAgain">
-              Restart
-            </button>
-          </div>
-        </div>
+        <>
+          {finalPoints < 8 ? (
+            <div className="earnedContent">
+              <div className="content">
+                <h3 className="endText">
+                  Vous avez gagné : {finalPoints} point
+                  {finalPoints !== "1" ? "s" : ""}
+                </h3>
+                <button onClick={handleClick} className="tryAgain">
+                  Menu principal
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="earnedContent congrats">
+              <div className="content">
+                <h1 className="endText">Congratulations {userName}</h1>
+                <h3 className="endText">
+                  Vous avez gagné: {finalPoints} point
+                  {finalPoints !== "1" ? "s" : ""}
+                </h3>
+                <button onClick={handleClick} className="tryAgain">
+                  Restart
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );

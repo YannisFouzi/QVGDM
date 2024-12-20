@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import correctSound from "../assets/sounds_correct.mp3";
 import playSound from "../assets/sounds_play.mp3";
+import victorySound from "../assets/sounds_victory.mp3";
 import wrongSound from "../assets/sounds_wrong.mp3";
 import { MESSAGE_TYPES, ROLES } from "../config";
 import { useAudio } from "../hooks/useAudio";
@@ -31,6 +32,7 @@ export default function Trivia({
   const { play: playStart } = useAudio(playSound);
   const { play: playCorrect } = useAudio(correctSound);
   const { play: playWrong } = useAudio(wrongSound);
+  const { play: playVictory } = useAudio(victorySound);
   const [visibleAnswers, setVisibleAnswers] = useState([]);
 
   useEffect(() => {
@@ -91,12 +93,16 @@ export default function Trivia({
           playCorrect();
           delay(1000, () => {
             delay(2000, () => {
-              setShowNextButton(true);
+              if (questionNumber === questions.length) {
+                setStop(true);
+              } else {
+                setShowNextButton(true);
+              }
               sendMessage({
                 type: MESSAGE_TYPES.GAME_STATE,
                 state: {
                   currentScreen: "game",
-                  showNextButton: true,
+                  showNextButton: questionNumber < questions.length,
                   showValidateButton: false,
                   selectedAnswers,
                   isDoubleChanceActive,
@@ -138,12 +144,16 @@ export default function Trivia({
           playCorrect();
           delay(1000, () => {
             delay(2000, () => {
-              setShowNextButton(true);
+              if (questionNumber === questions.length) {
+                setStop(true);
+              } else {
+                setShowNextButton(true);
+              }
               sendMessage({
                 type: MESSAGE_TYPES.GAME_STATE,
                 state: {
                   currentScreen: "game",
-                  showNextButton: true,
+                  showNextButton: questionNumber < questions.length,
                   showValidateButton: false,
                   selectedAnswers,
                   isDoubleChanceActive,
@@ -280,21 +290,19 @@ export default function Trivia({
   ]);
 
   const handleNextQuestion = () => {
+    // Vérifier si c'est la dernière question (15)
+    if (questionNumber === questions.length) {
+      setStop(true);
+      // Pas besoin de réinitialiser les autres états car le jeu se termine
+      return;
+    }
+
     if (questions.length > questionNumber) {
       setQuestionNumber((prev) => prev + 1);
       setSelectedAnswer(null);
       setIsConfirming(false);
       setClassName("answer");
       setShowNextButton(false);
-      setIsValidating(false);
-      setIsDoubleChanceActive(false);
-      setSelectedAnswers([]);
-      setHiddenAnswers([]);
-    } else {
-      setStop(true);
-      setQuestionNumber(1);
-      setSelectedAnswer(null);
-      setIsConfirming(false);
       setIsValidating(false);
       setIsDoubleChanceActive(false);
       setSelectedAnswers([]);

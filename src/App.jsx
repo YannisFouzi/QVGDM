@@ -26,28 +26,27 @@ function App() {
   const MoneyPyramidData = useMemo(() => MoneyPyramid, []);
 
   useEffect(() => {
-    if (questionNumber > currentQuestions.length) {
-      setStop(true);
-      setEarned(MoneyPyramidData[questionNumber - 2].amount);
-    } else if (stop) {
-      // Ajout de cette condition pour gérer les points quand le joueur perd
-      const currentQuestionIndex = questionNumber - 2;
-      if (currentQuestionIndex >= 0) {
-        // Si le joueur a dépassé la première question
-        if (currentQuestionIndex >= 9) {
-          // Palier 10 atteint
-          setEarned("10");
-        } else if (currentQuestionIndex >= 4) {
-          // Palier 5 atteint
-          setEarned("5");
+    if (stop) {
+      // Si le joueur a terminé la dernière question
+      if (questionNumber === currentQuestions.length) {
+        setEarned("15"); // Victoire totale !
+      } else {
+        // Logique pour les paliers si le joueur s'arrête avant
+        const currentQuestionIndex = questionNumber - 2;
+        if (currentQuestionIndex >= 0) {
+          if (currentQuestionIndex >= 9) {
+            setEarned("10");
+          } else if (currentQuestionIndex >= 4) {
+            setEarned("5");
+          } else {
+            setEarned("0");
+          }
         } else {
           setEarned("0");
         }
-      } else {
-        setEarned("0");
       }
     }
-  }, [questionNumber, currentQuestions.length, stop, MoneyPyramidData]);
+  }, [questionNumber, currentQuestions.length, stop]);
 
   //formatting amount
   const convert = (num) => {
