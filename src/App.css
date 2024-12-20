@@ -313,6 +313,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(to bottom, #000428, #004e92);
+  padding: 20px 0;
 }
 
 .moneyList {
@@ -324,28 +326,58 @@
 .moneyListItem {
   display: flex;
   align-items: center;
-  padding: 5px;
-  border-radius: 5px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.moneyListItem:first-child {
+  background: linear-gradient(45deg, #ffd700, #ffa500);
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.moneyListItem:first-child .moneyListItemNumber,
+.moneyListItem:first-child .moneyListItemAmount {
+  color: white;
+  font-weight: 700;
 }
 
 .moneyListItem.active {
-  background-color: teal;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
+  position: relative;
 }
 
 .moneyListItem.milestone {
-  color: #ffd700;
-  font-weight: bold;
+  background: linear-gradient(45deg, #1a237e, #0d47a1);
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 .moneyListItemNumber {
   font-size: 18px;
-  font-weight: 100;
+  font-weight: 600;
   width: 30%;
+  color: #90caf9;
 }
 
 .moneyListItemAmount {
   font-size: 20px;
-  font-weight: 300;
+  font-weight: 500;
+  color: white;
+}
+
+.moneyListItem.milestone .moneyListItemAmount {
+  color: #ffd700;
+  font-weight: 700;
 }
 
 .earnedContent {
