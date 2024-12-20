@@ -8,7 +8,7 @@ export default function Jokers({ jokers, onJokerUse }) {
         onClick={() => jokers.phoneCall && onJokerUse("phoneCall")}
         disabled={!jokers.phoneCall}
       >
-        📞 Appel ami
+        Appel ami
       </button>
       <button
         className={`joker ${!jokers.fiftyFifty ? "used" : ""}`}
@@ -22,7 +22,7 @@ export default function Jokers({ jokers, onJokerUse }) {
         onClick={() => jokers.doubleChance && onJokerUse("doubleChance")}
         disabled={!jokers.doubleChance}
       >
-        🎯 Double chance
+        Double chance
       </button>
     </div>
   );

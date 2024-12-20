@@ -42,21 +42,22 @@ export const Earned = ({
 
   // Jouer le son de victoire quand c'est une victoire totale
   useEffect(() => {
-    if (parseInt(earned) === 15) {
+    if (parseInt(earned) === 20) {
       playVictory();
     }
   }, []); // On ne le joue qu'une fois au montage du composant
 
   const calculateFinalPoints = () => {
     const earnedNumber = parseInt(earned);
-    if (earnedNumber === 15) {
-      return "15";
-    } else if (earnedNumber >= 10) {
-      return "10";
-    } else if (earnedNumber >= 5) {
-      return "5";
+    if (earnedNumber === 20) {
+      return "20"; // Victoire totale
+    } else if (earnedNumber === 12) {
+      return "12"; // Palier 10
+    } else if (earnedNumber === 5) {
+      return "5"; // Palier 5
+    } else {
+      return earned; // Points exacts de la dernière question réussie
     }
-    return "0";
   };
 
   const finalPoints = calculateFinalPoints();
@@ -70,7 +71,7 @@ export const Earned = ({
 
   return (
     <>
-      {finalPoints === "15" ? (
+      {finalPoints === "20" ? (
         <div className="earnedContent congrats">
           <div className="content">
             <h1 className="endText">Félicitations !</h1>
@@ -84,7 +85,7 @@ export const Earned = ({
         </div>
       ) : (
         <>
-          {finalPoints < 8 ? (
+          {parseInt(finalPoints) < 12 ? (
             <div className="earnedContent">
               <div className="content">
                 <h3 className="endText">
@@ -101,8 +102,7 @@ export const Earned = ({
               <div className="content">
                 <h1 className="endText">Congratulations {userName}</h1>
                 <h3 className="endText">
-                  Vous avez gagné: {finalPoints} point
-                  {finalPoints !== "1" ? "s" : ""}
+                  Vous avez gagné : {finalPoints} points
                 </h3>
                 <button onClick={handleClick} className="tryAgain">
                   Restart

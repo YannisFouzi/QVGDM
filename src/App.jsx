@@ -29,17 +29,20 @@ function App() {
     if (stop) {
       // Si le joueur a terminé la dernière question
       if (questionNumber === currentQuestions.length) {
-        setEarned("15"); // Victoire totale !
+        setEarned("20"); // Victoire totale = 20 points
       } else {
         // Logique pour les paliers si le joueur s'arrête avant
         const currentQuestionIndex = questionNumber - 2;
         if (currentQuestionIndex >= 0) {
           if (currentQuestionIndex >= 9) {
-            setEarned("10");
+            // Palier 10 atteint (12 points garantis)
+            setEarned("12");
           } else if (currentQuestionIndex >= 4) {
+            // Palier 5 atteint (5 points garantis)
             setEarned("5");
           } else {
-            setEarned("0");
+            // Sinon le joueur gagne les points de la dernière question réussie
+            setEarned(currentQuestionIndex + 1);
           }
         } else {
           setEarned("0");
