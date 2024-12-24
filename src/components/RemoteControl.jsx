@@ -49,7 +49,7 @@ export default function RemoteControl() {
     <div className="remote-control">
       {!isConnected && (
         <div className="connection-status">
-          En attente de connexion avec le jeu...
+          En attente de connexion avec l'interface...
         </div>
       )}
 
@@ -64,6 +64,9 @@ export default function RemoteControl() {
               </button>
               <button onClick={() => sendButtonClick("selectPart", 2)}>
                 Julien & Steven
+              </button>
+              <button onClick={() => sendButtonClick("selectPart", 3)}>
+                Noël
               </button>
             </div>
           )}
