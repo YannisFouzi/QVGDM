@@ -6,6 +6,7 @@ import Trivia from "./components/Trivia";
 import { MoneyPyramid } from "./data/MoneyPyramid";
 import { ListOfQuestions } from "./data/questions";
 import { ListOfQuestionsPartie2 } from "./data/questionsPartie2";
+import { ListOfQuestionsPartie3 } from "./data/questionsPartie3";
 
 function App() {
   //username
@@ -19,9 +20,19 @@ function App() {
   const [selectedPart, setSelectedPart] = useState(null);
   const [showNextButton, setShowNextButton] = useState(false);
 
-  // Sélectionner la liste de questions appropriée
-  const currentQuestions =
-    selectedPart === 1 ? ListOfQuestions : ListOfQuestionsPartie2;
+  // Modifier la sélection des questions pour inclure la partie 3
+  const currentQuestions = useMemo(() => {
+    switch (selectedPart) {
+      case 1:
+        return ListOfQuestions;
+      case 2:
+        return ListOfQuestionsPartie2;
+      case 3:
+        return ListOfQuestionsPartie3;
+      default:
+        return ListOfQuestions;
+    }
+  }, [selectedPart]);
 
   //using useMemo hook to hold the money pyraid data
   const MoneyPyramidData = useMemo(() => MoneyPyramid, []);
@@ -111,6 +122,7 @@ function App() {
           setUserName={setUserName}
           userName={userName}
           setSelectedPart={setSelectedPart}
+          showNoelButton={true}
         />
       )}
     </div>

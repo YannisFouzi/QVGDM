@@ -3,9 +3,14 @@ import mainSound from "../assets/main.mp3";
 import { MESSAGE_TYPES, ROLES, WS_URL } from "../config";
 import { useAudio } from "../hooks/useAudio";
 
-export default function Start({ setUserName, setSelectedPart }) {
+export default function Start({
+  setUserName,
+  setSelectedPart,
+  showNoelButton,
+}) {
   const [gameStarted, setGameStarted] = useState(false);
   const [ws, setWs] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
   const { play: playMain } = useAudio(mainSound);
 
   useEffect(() => {
@@ -13,12 +18,17 @@ export default function Start({ setUserName, setSelectedPart }) {
 
     websocket.onopen = () => {
       console.log("Connecté au serveur WebSocket");
+      setIsConnected(true);
       websocket.send(
         JSON.stringify({
           type: MESSAGE_TYPES.REGISTER,
           role: ROLES.GAME,
         })
       );
+    };
+
+    websocket.onclose = () => {
+      setIsConnected(false);
     };
 
     websocket.onmessage = (event) => {
@@ -38,22 +48,28 @@ export default function Start({ setUserName, setSelectedPart }) {
 
   // Envoyer l'état de l'écran de démarrage
   const broadcastGameState = () => {
-    if (ws) {
-      ws.send(
-        JSON.stringify({
-          type: MESSAGE_TYPES.GAME_STATE,
-          state: {
-            currentScreen: "start",
-            showPartSelection: gameStarted,
-          },
-        })
-      );
+    if (ws && isConnected) {
+      try {
+        ws.send(
+          JSON.stringify({
+            type: MESSAGE_TYPES.GAME_STATE,
+            state: {
+              currentScreen: "start",
+              showPartSelection: gameStarted,
+            },
+          })
+        );
+      } catch (error) {
+        console.error("Erreur lors de l'envoi du message:", error);
+      }
     }
   };
 
   useEffect(() => {
-    broadcastGameState();
-  }, [gameStarted]);
+    if (isConnected) {
+      broadcastGameState();
+    }
+  }, [gameStarted, isConnected]);
 
   const handleRemoteAction = (button, value) => {
     switch (button) {
@@ -106,6 +122,14 @@ export default function Start({ setUserName, setSelectedPart }) {
                 <button className="startButton" onClick={() => handleClick(2)}>
                   Julien & Steven
                 </button>
+                {showNoelButton && (
+                  <button
+                    className="startButton"
+                    onClick={() => handleClick(3)}
+                  >
+                    Noël
+                  </button>
+                )}
               </div>
             </div>
           )}
